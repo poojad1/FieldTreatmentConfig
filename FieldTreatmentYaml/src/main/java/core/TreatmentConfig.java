@@ -7,24 +7,28 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import com.entity.*;
+import com.entity.Dataset;
+import com.entity.Degree;
+import com.entity.ListDataset;
+import com.entity.ListDegree;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import responses.DegreeTreatment;
-import responses.FieldTreatment;
 
+import response.DegreeTreatment;
+import response.FieldTreatment;
 
 public class TreatmentConfig {
 
 	ListDataset ListDataset;
 	ListDegree ListDegree;
-
+	String datasetYamlPath,degreeYamlPath="";
+	 
 	public ListDataset getDatasetYaml() throws IOException {
 		Properties prop = new Properties();
 		InputStream input = null;
 		input = new FileInputStream("config.properties");
 		prop.load(input);
-		String datasetYamlPath = prop.getProperty("pathDataSet");
+		datasetYamlPath = prop.getProperty("pathDataSet");
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		ListDataset = mapper.readValue(new File(datasetYamlPath), ListDataset.class);
 		return ListDataset;
@@ -33,9 +37,9 @@ public class TreatmentConfig {
 	public ListDegree getDegreeYaml() throws IOException {
 		Properties prop = new Properties();
 		InputStream input = null;
-		input = new FileInputStream("config.properties");
+		input = new FileInputStream("config.properties");		
 		prop.load(input);
-		String degreeYamlPath = prop.getProperty("pathDegree");
+		degreeYamlPath = prop.getProperty("pathDegree");
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		ListDegree = mapper.readValue(new File(degreeYamlPath), ListDegree.class);
 		return ListDegree;
@@ -44,25 +48,25 @@ public class TreatmentConfig {
 	public List<FieldTreatment> getDataset(String tableName) throws IOException {
 		ListDataset ListDataset = getDatasetYaml();
 		List<Dataset> datasets = ListDataset.getDatasets();
-		List<FieldTreatment> dataSetTreatments = new ArrayList<FieldTreatment>();		
-		if (!"".equals(tableName)) {			
-		datasets.stream().forEach(dataset -> {
-			if (dataset.getName().equals(tableName)) {
-				dataset.getFields().stream().forEach(field -> {
-					FieldTreatment datasetTreatment = new FieldTreatment();
-					datasetTreatment.setDataset(dataset.getName());
-					datasetTreatment.setField(field.getName());
-					field.getTreatments().stream().forEach(treatment -> {
-						datasetTreatment.setDeid(treatment.getDeid());
-						datasetTreatment.setAction(treatment.getAction());
-						datasetTreatment.setUser(treatment.getUser());
+		List<FieldTreatment> dataSetTreatments = new ArrayList<FieldTreatment>();
+		if (!"".equals(tableName)) {
+			datasets.stream().forEach(dataset -> {
+				if (dataset.getName().equals(tableName)) {
+					dataset.getFields().stream().forEach(field -> {
+						FieldTreatment datasetTreatment = new FieldTreatment();
+						datasetTreatment.setDataset(dataset.getName());
+						datasetTreatment.setField(field.getName());
+						field.getTreatments().stream().forEach(treatment -> {
+							datasetTreatment.setDeid(treatment.getDeid());
+							datasetTreatment.setAction(treatment.getAction());
+							datasetTreatment.setUser(treatment.getUser());
+						});
+						dataSetTreatments.add(datasetTreatment);
 					});
-					dataSetTreatments.add(datasetTreatment);
-				});
-			}
+				}
 
-		});		
-		}else {
+			});
+		} else {
 			datasets.stream().forEach(dataset -> {
 				dataset.getFields().stream().forEach(field -> {
 					FieldTreatment datasetTreatment = new FieldTreatment();
