@@ -1,7 +1,6 @@
-package responses;
+package response;
 
-public class DegreeTreatment {
-	
+public class DegreeTreatment {	
 	
 	private String degree;	
 	
@@ -11,18 +10,16 @@ public class DegreeTreatment {
 	
 	private String action;
 	
-	 public DegreeTreatment( String degree,String deid, String user,String action) {
-	        super();
-	        this.degree = degree;
-	        this.deid = deid;
-	        
-	        this.user = user;
-	        
-	        this.action = action;
-	    }
+	public DegreeTreatment(String degree, String deid, String user, String action) {
+	super();
+	this.degree = degree;
+	this.deid = deid;
+	this.user = user;
+	this.action = action;
+	}
 	
 	public DegreeTreatment() {
-		super();		
+	super();		
 	}
 
 	public String getDegree() {
