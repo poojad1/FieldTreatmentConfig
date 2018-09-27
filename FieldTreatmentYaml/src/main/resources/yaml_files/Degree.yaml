@@ -1,0 +1,36 @@
+
+degrees:
+
+  - name: mobility
+
+    treatments:
+
+      - deid: persistent
+
+        user: authorized
+
+        action: drop
+        
+      - deid: persistent
+
+        user: controlled
+
+        action: drop
+
+      - deid: transient
+
+        user: authorized
+
+        action: keep
+
+      - deid: transient
+
+        user: controlled
+
+        action: tokenize
+        
+        
+        
+        
+ 
+

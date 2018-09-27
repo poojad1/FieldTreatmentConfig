@@ -1,0 +1,69 @@
+
+datasets:
+
+  - name: use_transaction
+
+    fields:
+
+      - name: device_id
+
+        type: int
+
+        degree: mobility
+        
+        treatments : 
+        
+        - deid: persistent
+        
+          user: authorized
+          
+          action: tokenize
+
+      - name: bus_id
+
+        type: int
+
+        degree: mobility
+        
+        treatments : 
+        
+        - deid: transient
+        
+          user: controlled
+          
+          action: keep
+          
+  - name: sales_transaction    
+    
+    fields:
+
+      - name: devices2_id
+
+        type: int
+
+        degree: mobility
+        
+        treatments : 
+        
+        - deid: persistent
+        
+          user: authorized
+          
+          action: keep
+
+      - name: buses2_id
+
+        type: int
+
+        degree: mobility
+        
+        treatments : 
+        
+        - deid: transient
+        
+          user: controlled
+          
+          action: drop
+          
+          
+
