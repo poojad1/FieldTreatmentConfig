@@ -1,6 +1,6 @@
-package Constants;
+package constant;
 
-public class Constants {
+public class Constant {
 	
 	public static final String DEGREE= "degree";	
 	public static final String DEID= "deid";

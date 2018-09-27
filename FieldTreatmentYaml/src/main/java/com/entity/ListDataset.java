@@ -1,4 +1,4 @@
-package yaml.entity;
+package com.entity;
 import java.util.List;
 
 public class ListDataset {

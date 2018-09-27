@@ -1,4 +1,4 @@
-package yaml.entity;
+package core;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,11 +7,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import com.entity.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import Response.DegreeResponse;
-import Response.FinalResponseDataSet;
-import Response.ResponseDataset;
+import responses.DegreeTreatment;
+import responses.FieldTreatment;
+
 
 public class TreatmentConfig {
 
@@ -40,15 +41,15 @@ public class TreatmentConfig {
 		return ListDegree;
 	}
 
-	public List<ResponseDataset> getDataset(String tableName) throws IOException {
+	public List<FieldTreatment> getDataset(String tableName) throws IOException {
 		ListDataset ListDataset = getDatasetYaml();
 		List<Dataset> datasets = ListDataset.getDatasets();
-		List<ResponseDataset> dataSetTreatments = new ArrayList<ResponseDataset>();		
+		List<FieldTreatment> dataSetTreatments = new ArrayList<FieldTreatment>();		
 		if (!"".equals(tableName)) {			
 		datasets.stream().forEach(dataset -> {
 			if (dataset.getName().equals(tableName)) {
 				dataset.getFields().stream().forEach(field -> {
-					ResponseDataset datasetTreatment = new ResponseDataset();
+					FieldTreatment datasetTreatment = new FieldTreatment();
 					datasetTreatment.setDataset(dataset.getName());
 					datasetTreatment.setField(field.getName());
 					field.getTreatments().stream().forEach(treatment -> {
@@ -64,7 +65,7 @@ public class TreatmentConfig {
 		}else {
 			datasets.stream().forEach(dataset -> {
 				dataset.getFields().stream().forEach(field -> {
-					ResponseDataset datasetTreatment = new ResponseDataset();
+					FieldTreatment datasetTreatment = new FieldTreatment();
 					datasetTreatment.setDataset(dataset.getName());
 					datasetTreatment.setField(field.getName());
 					field.getTreatments().stream().forEach(treatment -> {
@@ -79,14 +80,14 @@ public class TreatmentConfig {
 		return dataSetTreatments;
 	}
 
-	public List<DegreeResponse> getDegree() throws IOException {
+	public List<DegreeTreatment> getDegree() throws IOException {
 		ListDegree ListDegree = getDegreeYaml();
 		List<Degree> degrees = ListDegree.getDegrees();
 
-		List<DegreeResponse> degreeResponses = new ArrayList<DegreeResponse>();
+		List<DegreeTreatment> degreeResponses = new ArrayList<DegreeTreatment>();
 		degrees.stream().forEach(degree -> {
 			degree.getTreatments().stream().forEach(treatment -> {
-				DegreeResponse degreeResponse = new DegreeResponse();
+				DegreeTreatment degreeResponse = new DegreeTreatment();
 				degreeResponse.setDegree(degree.getName());
 				degreeResponse.setDeid(treatment.getDeid());
 				degreeResponse.setUser(treatment.getUser());
@@ -98,12 +99,12 @@ public class TreatmentConfig {
 		return degreeResponses;
 	}
 
-	public List<FinalResponseDataSet> getFinalDatasetResponse(List<DegreeResponse> degreeResponse,
-			List<ResponseDataset> dataSetResponse) {
-		List<FinalResponseDataSet> responseList = new ArrayList<FinalResponseDataSet>();
+	public List<FieldTreatment> getFieldTreatment(List<DegreeTreatment> degreeResponse,
+			List<FieldTreatment> dataSetResponse) {
+		List<FieldTreatment> responseList = new ArrayList<FieldTreatment>();
 		dataSetResponse.stream().forEach(dataset -> {
 			degreeResponse.stream().forEach(degree -> {
-				FinalResponseDataSet degreeY = new FinalResponseDataSet();
+				FieldTreatment degreeY = new FieldTreatment();
 				degreeY.setDataset(dataset.getDataset());
 				degreeY.setField(dataset.getField());
 				String deid = dataset.getDeid();

@@ -1,6 +1,6 @@
-package Response;
+package responses;
 
-public class FinalResponseDataSet {
+public class FieldTreatment {
 	
 	private String dataset;	
 	private String field;
