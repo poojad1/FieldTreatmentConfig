@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 /**    */
-public class CsvToJson {
+public class CsvToYaml {
 	public static void main(String[] args) throws JsonProcessingException, IOException {
 		CSVConfig config = new CSVConfig();	
 		config.getJsonFromCSV();
