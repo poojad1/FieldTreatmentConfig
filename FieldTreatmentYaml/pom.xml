@@ -35,6 +35,11 @@
           <version>1.18.2</version>
           <scope>provided</scope>
       </dependency>
+      <dependency>
+          <groupId>com.microsoft.azure</groupId>
+          <artifactId>azure-storage</artifactId>
+          <version>8.0.0</version>
+      </dependency>
 </dependencies>
     <build>
         <plugins>

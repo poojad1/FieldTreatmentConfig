@@ -1,12 +1,12 @@
 package com.cubic.anonymization;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import com.cubic.anonymization.Azure.AzureConfig;
 import com.cubic.anonymization.entity.Dataset;
 import com.cubic.anonymization.entity.Degree;
 import com.cubic.anonymization.entity.ListDataset;
@@ -16,40 +16,58 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import com.cubic.anonymization.response.DegreeTreatment;
 import com.cubic.anonymization.response.FieldTreatment;
+import com.microsoft.azure.storage.StorageException;
 
 public class TreatmentConfig {
 
 	private ListDataset ListDataset;
 	private ListDegree ListDegree;
+	private AzureConfig azureConfig = new AzureConfig();
+
+	/* No need to read from system path as yaml files are resource files*/
 	//private String datasetYamlPath,degreeYamlPath="";
-	 
-	public ListDataset getDatasetYaml() throws IOException {
-		//Properties prop = new Properties();
-		//InputStream input = null;
-		//input = new FileInputStream("config.properties");
-		//prop.load(input);
-		ClassLoader classLoader = getClass().getClassLoader();
-		//File datasetYaml = new File(classLoader.getResourceAsStream("Dataset.yaml").);
-		InputStream datasetIn = classLoader.getResourceAsStream("Dataset.yaml");
+
+	//Updated code to read from resource
+	public ListDataset getDatasetYaml()  {
+
+		//ClassLoader classLoader = getClass().getClassLoader();
+		//InputStream datasetIn = classLoader.getResourceAsStream("Dataset.yaml");
+		InputStreamReader inputStreamReader = null;
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		ListDataset = mapper.readValue(datasetIn, ListDataset.class);
+		try {
+			 inputStreamReader = azureConfig.getYamlStreamFromAzure(azureConfig.getProperties().getProperty("dataset.filename"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			ListDataset = mapper.readValue(inputStreamReader, ListDataset.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return ListDataset;
 	}
 
-	public ListDegree getDegreeYaml() throws IOException {
-//		Properties prop = new Properties();
-//		InputStream input = null;
-//		input = new FileInputStream("config.properties");
-//		prop.load(input);
-//		degreeYamlPath = prop.getProperty("pathDegree");
+	//Updated code to read from resource
+	public ListDegree getDegreeYaml()   {
 
-		ClassLoader classLoader = getClass().getClassLoader();
-		InputStream degreeIn = classLoader.getResourceAsStream("Degree.yaml");
+		//ClassLoader classLoader = getClass().getClassLoader();
+		//InputStream degreeIn = classLoader.getResourceAsStream("Degree.yaml");
+		InputStreamReader inputStreamReader = null;
+		try {
+			inputStreamReader = azureConfig.getYamlStreamFromAzure(azureConfig.getProperties().getProperty("degree.filename"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		ListDegree = mapper.readValue(degreeIn, ListDegree.class);
+		try {
+			ListDegree = mapper.readValue(inputStreamReader, ListDegree.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return ListDegree;
 	}
 
+	//try to avoid duplication
 	public List<FieldTreatment> getDataset(String tableName) throws IOException {
 		ListDataset ListDataset = getDatasetYaml();
 		List<Dataset> datasets = ListDataset.getDatasets();
@@ -132,6 +150,7 @@ public class TreatmentConfig {
 		return responseList;
 	}
 
+	//Added method to get required treatments as per table
 	public  List<FieldTreatment> getTreatments(String tableName){
 		List<FieldTreatment> fieldDegreeTreatments = new ArrayList<>();
 		try{
@@ -140,7 +159,7 @@ public class TreatmentConfig {
 			fieldDegreeTreatments = this.getFieldTreatment(degreeTreatments, fieldTreatments);
 
 		}catch(Exception e){
-			System.out.println("Please provide the  correct path for Yaml in config file " + e.getMessage());
+			e.printStackTrace();
 		}
 		return fieldDegreeTreatments;
 	}

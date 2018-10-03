@@ -10,6 +10,7 @@ import com.cubic.anonymization.response.DegreeTreatment;
 
 public class YamlTreatment {
 
+	//No need of main
 	public static void main(String[] args) {
 /*		TreatmentConfig config = new TreatmentConfig();
 		String tableName = "use_transaction";
